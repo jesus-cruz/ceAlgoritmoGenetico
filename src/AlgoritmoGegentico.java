@@ -9,12 +9,14 @@ public class AlgoritmoGegentico {
 	private int tamanoPoblacion = 0;
 	private int tamanoIndividuo = 0;
 	private ArrayList<Integer> buenaForma;
-	
+	private ArrayList<Integer> ruleta;
+	private ArrayList<ArrayList<Integer>> poblacionPostRuleta;
+	private ArrayList<ArrayList<Integer>> poblacionPostCrossOver;
+
 	//====================================GettersSetters===============================================
 	public ArrayList<Integer> getBuenaForma() {
 		return buenaForma;
 	}
-
 	public void setBuenaForma(ArrayList<Integer> buenaForma) {
 		this.buenaForma = buenaForma;
 	}
@@ -26,7 +28,28 @@ public class AlgoritmoGegentico {
 	public void setPoblacionInicial(ArrayList<ArrayList<Integer>> poblacionInicial) {
 		this.poblacionInicial = poblacionInicial;
 	}
+	public ArrayList<Integer> getRuleta() {
+		return ruleta;
+	}
 
+	public void setRuleta(ArrayList<Integer> ruleta) {
+		this.ruleta = ruleta;
+	}
+	public ArrayList<ArrayList<Integer>> getPoblacionPostRuleta() {
+		return poblacionPostRuleta;
+	}
+
+	public void setPoblacionPostRuleta(ArrayList<ArrayList<Integer>> poblacionPostRuleta) {
+		this.poblacionPostRuleta = poblacionPostRuleta;
+	}
+	public ArrayList<ArrayList<Integer>> getPoblacionPostCrossOver() {
+		return poblacionPostCrossOver;
+	}
+
+	public void setPoblacionPostCrossOver(ArrayList<ArrayList<Integer>> poblacionPostCrossOver) {
+		this.poblacionPostCrossOver = poblacionPostCrossOver;
+	}
+	
 	//========================================Metodos==================================================
 	/**
 	 * Crear una poblacion con un tamaño num, formado por vectores len con valores entre el min y el max
@@ -73,13 +96,41 @@ public class AlgoritmoGegentico {
 		return contador;
 	}
 
+	/**
+	 * Algoritmo tipo ruleta para seleccionar los padres
+	 */
 	public void seleccionarParaReproduccion() {
 		// TODO Auto-generated method stub
+		this.ruleta = new ArrayList<>(this.tamanoPoblacion);
+		this.poblacionPostRuleta = new ArrayList<>();
+		int buenaFormaTotal = 0;
+		for ( int i = 0; i < buenaForma.size(); i++){
+			buenaFormaTotal = buenaFormaTotal + buenaForma.get(i);
+		}
 		
+		// Lanzamos la ruleta para cada individuo de la población
+		for ( int i = 0; i < this.tamanoPoblacion; i++){
+			ruleta.add(i,ThreadLocalRandom.current().nextInt(0,this.tamanoPoblacion));
+		}
+		
+		for ( int i = 0; i < this.tamanoPoblacion; i++){
+			poblacionPostRuleta.add(i, poblacionInicial.get(ruleta.get(i)));
+		}
 	}
-	
-	
-	
-	
+
+	public void crossover(double prob) {
+		// TODO Auto-generated method stub
+		this.poblacionPostCrossOver = new ArrayList<>();
+		double aux = 0.0;
+		for ( int i = 0; i < this.tamanoPoblacion; i++){
+			aux = ThreadLocalRandom.current().nextDouble(0,1 + 1);
+			if ( aux <= prob) {												// Vi cruza
+				poblacionPostCrossOver.add(this.poblacionPostRuleta.get(i));
+			} else if ( aux > prob) {										// Vi no cruz
+				
+			}
+		}
+	}
+		
 	
 }
