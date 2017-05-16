@@ -15,6 +15,8 @@ public class Main {
 	
 		algoritmoUno.crossover(0.6);
 		System.out.println("\nLa población tras el crossover es:\n" + algoritmoUno.getPoblacionPostCrossOver());
+		
+		
 	}
 
 }

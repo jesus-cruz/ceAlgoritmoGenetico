@@ -119,18 +119,64 @@ public class AlgoritmoGegentico {
 	}
 
 	public void crossover(double prob) {
-		// TODO Auto-generated method stub
+		// Seleccionamos los individuos para el crossver
 		this.poblacionPostCrossOver = new ArrayList<>();
+		ArrayList<ArrayList<Integer>> poblacionSolteros = new ArrayList<>(poblacionPostCrossOver);
+		ArrayList<ArrayList<Integer>> poblacionParejas = new ArrayList<>(poblacionPostCrossOver);
+		ArrayList<ArrayList<Integer>> poblacionAux = new ArrayList<>(poblacionPostCrossOver);
 		double aux = 0.0;
 		for ( int i = 0; i < this.tamanoPoblacion; i++){
 			aux = ThreadLocalRandom.current().nextDouble(0,1 + 1);
 			if ( aux <= prob) {												// Vi cruza
-				poblacionPostCrossOver.add(this.poblacionPostRuleta.get(i));
-			} else if ( aux > prob) {										// Vi no cruz
-				
+				poblacionParejas.add(this.poblacionPostRuleta.get(i));
+				System.out.println("El individuo " + i + " cruza " );
+			} else if ( aux > prob) {										// Vi no cruza
+				poblacionSolteros.add(this.poblacionPostRuleta.get(i));
 			}
 		}
-	}
 		
+		// Nos preparamos para hacer el crossover con una pareja
+		int nInvididuosCrossover = poblacionParejas.size();
+		if ( nInvididuosCrossover != 2) {												// 3 individuos o más
+			System.out.println("Crossover de más de dos individuos no implementado");
+		} else if ( nInvididuosCrossover == 1 ){										// 1 individuo
+			return;
+		} else {																		// 2 individuos
+			// Calculamos y realizamos el corte 
+			int corte = ThreadLocalRandom.current().nextInt(0,1 + this.tamanoIndividuo);
+			System.out.println("El corte se realiza en " + corte);
+			
+			ArrayList<Integer> individuoAux = new ArrayList<>(this.tamanoIndividuo);
+			
+			for ( int i = 0; i < corte ; i++){
+				individuoAux.add(poblacionParejas.get(0).get(i));
+			}
+			for ( int i = corte ; i < this.tamanoIndividuo; i++){
+				individuoAux.add(poblacionParejas.get(0).get(i));
+			}
+			poblacionAux.add(individuoAux);
+			
+			individuoAux.clear();
+			for ( int i = 0; i < corte ; i++){
+				individuoAux.add(poblacionParejas.get(1).get(i));
+			}
+			for ( int i = corte ; i < this.tamanoIndividuo; i++){
+				individuoAux.add(poblacionParejas.get(1).get(i));
+			}
+			poblacionAux.add(individuoAux);
+			
+			poblacionPostCrossOver.addAll(poblacionSolteros);
+			poblacionPostCrossOver.addAll(poblacionAux);
+		}
+		
+		
+	}
+	
+
+	
+	
+	
+	
+	
 	
 }
