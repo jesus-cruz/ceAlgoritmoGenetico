@@ -9,9 +9,12 @@ public class AlgoritmoGegentico {
 	private int tamanoPoblacion = 0;
 	private int tamanoIndividuo = 0;
 	private ArrayList<Integer> buenaForma;
+	private ArrayList<Integer> buenaFormaActualizada;
 	private ArrayList<Integer> ruleta;
 	private ArrayList<ArrayList<Integer>> poblacionPostRuleta;
 	private ArrayList<ArrayList<Integer>> poblacionPostCrossOver;
+	private int nMaximoIteraciones = 20;
+	private int iteracionActual = 0;
 
 	//====================================GettersSetters===============================================
 	public ArrayList<Integer> getBuenaForma() {
@@ -52,7 +55,8 @@ public class AlgoritmoGegentico {
 	
 	//========================================Metodos==================================================
 	/**
-	 * Crear una poblacion con un tamaño num, formado por vectores len con valores entre el min y el max
+	 * Crear una poblacion de num individuos de longitud len, formado por vectores len con valores 
+	 * entre el min y el max
 	 * @param min
 	 * @param max
 	 * @param len
@@ -75,6 +79,7 @@ public class AlgoritmoGegentico {
 	 * Evaluamos la buena forma de cada individuo ( numero de 1's )
 	 */
 	public void evaluar() {
+		iteracionActual++;
 		this.buenaForma = new ArrayList<>(this.tamanoPoblacion);
 		for ( int i = 0; i < this.tamanoPoblacion ; i++){
 			buenaForma.add(i, contarUnos(this.poblacionInicial.get(i)));
@@ -89,7 +94,7 @@ public class AlgoritmoGegentico {
 	private int contarUnos(ArrayList<Integer> individuo){
 		int contador= 0;
 		for ( int i = 0; i < individuo.size(); i++){
-			if ( individuo.get(i) == 1 ){
+			if ( individuo.get(i) == 2 ){
 				contador++;
 			}
 		}
@@ -101,17 +106,43 @@ public class AlgoritmoGegentico {
 	 */
 	public void seleccionarParaReproduccion() {
 		// TODO Auto-generated method stub
-		this.ruleta = new ArrayList<>(this.tamanoPoblacion);
+		this.ruleta = new ArrayList<>();
 		this.poblacionPostRuleta = new ArrayList<>();
 		int buenaFormaTotal = 0;
 		for ( int i = 0; i < buenaForma.size(); i++){
 			buenaFormaTotal = buenaFormaTotal + buenaForma.get(i);
 		}
 		
-		// Lanzamos la ruleta para cada individuo de la población
-		for ( int i = 0; i < this.tamanoPoblacion; i++){
-			ruleta.add(i,ThreadLocalRandom.current().nextInt(0,this.tamanoPoblacion));
+		double probabilidadAux = 0;
+		// Realizamos la ruleta
+		for ( int i = 0; i < buenaForma.size() ; i++){
+			probabilidadAux = buenaForma.get(i);
+			probabilidadAux = probabilidadAux / buenaFormaTotal;
+			probabilidadAux = ( probabilidadAux * 100 ) ;
+			probabilidadAux--;
+			// Ahora tenemos el número de casillas para esa cadena en la ruleta
+			if ( probabilidadAux == -1.0){
+				probabilidadAux = 1;
+			}
+			if ( i == 0 ){
+				for ( int j = ruleta.size()-1; j < probabilidadAux; j++){
+					ruleta.add(i);
+				}
+			} else {
+				double tamannoAux = ruleta.size() +probabilidadAux;
+				for ( int j = ruleta.size()-1; j < tamannoAux; j++){
+					ruleta.add(i);
+				}
+			}
+			
 		}
+		
+		//System.out.println("e");
+		
+		// Lanzamos la ruleta para cada individuo de la población
+		/*for ( int i = 0; i < this.tamanoPoblacion; i++){
+			ruleta.add(i,ThreadLocalRandom.current().nextInt(0,this.tamanoPoblacion));
+		}*/
 		
 		for ( int i = 0; i < this.tamanoPoblacion; i++){
 			poblacionPostRuleta.add(i, poblacionInicial.get(ruleta.get(i)));
@@ -129,7 +160,7 @@ public class AlgoritmoGegentico {
 			aux = ThreadLocalRandom.current().nextDouble(0,1 + 1);
 			if ( aux <= prob) {												// Vi cruza
 				poblacionParejas.add(this.poblacionPostRuleta.get(i));
-				System.out.println("El individuo " + i + " cruza " );
+				//System.out.println("El individuo " + i + " cruza " );
 			} else if ( aux > prob) {										// Vi no cruza
 				poblacionSolteros.add(this.poblacionPostRuleta.get(i));
 			}
@@ -137,42 +168,79 @@ public class AlgoritmoGegentico {
 		
 		// Nos preparamos para hacer el crossover con una pareja
 		int nInvididuosCrossover = poblacionParejas.size();
-		if ( nInvididuosCrossover != 2) {												// 3 individuos o más
-			System.out.println("Crossover de más de dos individuos no implementado");
-		} else if ( nInvididuosCrossover == 1 ){										// 1 individuo
+		if ( nInvididuosCrossover%2 != 0) {												// 3 individuos o más
+			//System.out.println("Crossover número impar de individuos no implementado");
+			this.poblacionPostCrossOver = new ArrayList<>(this.poblacionInicial);
 			return;
-		} else {																		// 2 individuos
+		} else if ( nInvididuosCrossover == 1 || nInvididuosCrossover == 0 ){			// 1 individuo
+			//System.out.println("Crossover de un único individuo no se realiza");
+			this.poblacionPostCrossOver = new ArrayList<>(this.poblacionInicial);
+			return;
+		} else {																		// par individuos
 			// Calculamos y realizamos el corte 
+			//System.out.println("Crossover de número par de elementos");
 			int corte = ThreadLocalRandom.current().nextInt(0,1 + this.tamanoIndividuo);
-			System.out.println("El corte se realiza en " + corte);
+			//System.out.println("El corte se realiza en " + corte);
 			
 			ArrayList<Integer> individuoAux = new ArrayList<>(this.tamanoIndividuo);
 			
-			for ( int i = 0; i < corte ; i++){
-				individuoAux.add(poblacionParejas.get(0).get(i));
+			for ( int j = 0; j < nInvididuosCrossover ; j++){
+				for ( int i = 0; i < corte ; i++){
+					individuoAux.add(poblacionParejas.get(j).get(i));
+				}
+				for ( int i = corte ; i < this.tamanoIndividuo; i++){
+					individuoAux.add(poblacionParejas.get(j).get(i));
+				}
+				
+				ArrayList<Integer> individuoAux2 = new ArrayList<>(individuoAux);
+				poblacionAux.add(individuoAux2);
+				
+				individuoAux.clear();
+				individuoAux = new ArrayList<>(this.tamanoIndividuo);
 			}
-			for ( int i = corte ; i < this.tamanoIndividuo; i++){
-				individuoAux.add(poblacionParejas.get(0).get(i));
-			}
-			poblacionAux.add(individuoAux);
-			
-			individuoAux.clear();
-			for ( int i = 0; i < corte ; i++){
-				individuoAux.add(poblacionParejas.get(1).get(i));
-			}
-			for ( int i = corte ; i < this.tamanoIndividuo; i++){
-				individuoAux.add(poblacionParejas.get(1).get(i));
-			}
-			poblacionAux.add(individuoAux);
-			
 			poblacionPostCrossOver.addAll(poblacionSolteros);
 			poblacionPostCrossOver.addAll(poblacionAux);
-		}
-		
-		
+		}		
 	}
 	
-
+	public boolean criterioParada(){
+		if ( iteracionActual == nMaximoIteraciones){
+			return true;
+		} else {
+			return false;
+		}
+		
+		// Calculamos la media 
+		/*if ( this.buenaForma == null){
+			return false;
+		}
+		ArrayList<Integer> buenaFormaAntigua = new ArrayList(this.buenaForma);
+		// Calculamos su nueva buena forma
+		this.evaluar();
+		
+		double mediaAntigua = 0.0;
+		double mediaActualizada = 0.0;
+		
+		for ( int i =0; i < buenaFormaAntigua.size(); i++){
+			mediaAntigua = mediaAntigua + buenaFormaAntigua.get(i);
+		}
+		mediaAntigua = mediaAntigua / buenaForma.size();
+		
+		
+		for ( int i =0; i < buenaForma.size(); i++){
+			mediaActualizada = mediaActualizada + buenaForma.get(i);
+		}
+		mediaActualizada = mediaActualizada / buenaForma.size();
+		
+		double diferencia = mediaAntigua - mediaActualizada;
+		
+		if ( diferencia <= 0.4){
+			System.out.println("La diferencia vale: " + diferencia);
+			return true;
+		}
+		System.out.println("La diferencia vale: " + diferencia);
+		return false;*/
+	}
 	
 	
 	
