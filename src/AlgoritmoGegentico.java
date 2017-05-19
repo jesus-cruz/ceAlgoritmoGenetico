@@ -13,12 +13,17 @@ public class AlgoritmoGegentico {
 	private ArrayList<Integer> ruleta;
 	private ArrayList<ArrayList<Integer>> poblacionPostRuleta;
 	private ArrayList<ArrayList<Integer>> poblacionPostCrossOver;
-	private int nMaximoIteraciones = 20;
+	private int nMaximoIteraciones = 1000;
 	private int iteracionActual = 0;
 	private int max = 0;
 	private int min = 0;
 
 	//====================================GettersSetters===============================================
+	public void setDatos(){
+
+		this.tamanoIndividuo = this.poblacionInicial.get(0).size();
+		this.tamanoPoblacion = this.poblacionInicial.size();
+	}
 	public ArrayList<Integer> getBuenaForma() {
 		return buenaForma;
 	}
@@ -73,7 +78,7 @@ public class AlgoritmoGegentico {
 		for ( int i = 0; i < num; i++ ){
 			aux = new ArrayList<>(len) ;
 			for ( int j = 0; j < len; j++){
-				aux.add(j, ThreadLocalRandom.current().nextInt(min,max + 1));
+				aux.add(j, (Integer) ThreadLocalRandom.current().nextInt(min,max + 1));
 			}
 			poblacionInicial.add(i, aux);
 		}
@@ -95,13 +100,14 @@ public class AlgoritmoGegentico {
 	 * @param individuo
 	 * @return
 	 */
-	private int contarUnos(ArrayList<Integer> individuo){
-		int contador= 0;
+	private Integer contarUnos(ArrayList<Integer> individuo){
+		Integer contador= 0;
 		for ( int i = 0; i < individuo.size(); i++){
-			if ( individuo.get(i) == 2 ){		// contamos doses
+			if ( individuo.get(i) == 2.0 ){		// contamos doses
 				contador++;
 			}
 		}
+		//contador = individuo.get(0);
 		return contador;
 	}
 
@@ -112,12 +118,12 @@ public class AlgoritmoGegentico {
 		// TODO Auto-generated method stub
 		this.ruleta = new ArrayList<>();
 		this.poblacionPostRuleta = new ArrayList<>();
-		int buenaFormaTotal = 0;
+		Integer buenaFormaTotal = 0;
 		for ( int i = 0; i < buenaForma.size(); i++){
 			buenaFormaTotal = buenaFormaTotal + buenaForma.get(i);
 		}
 		
-		double probabilidadAux = 0;
+		Integer probabilidadAux = 0;
 		// Realizamos la ruleta
 		for ( int i = 0; i < buenaForma.size() ; i++){
 			probabilidadAux = buenaForma.get(i);
@@ -134,7 +140,7 @@ public class AlgoritmoGegentico {
 					ruleta.add(i);
 				}
 			} else {
-				double tamannoAux = ruleta.size() +probabilidadAux;
+				Integer tamannoAux = ruleta.size() +probabilidadAux;
 				for ( int j = ruleta.size()-1; j < tamannoAux; j++){
 					ruleta.add(i);
 				}
@@ -152,13 +158,13 @@ public class AlgoritmoGegentico {
 		}
 	}
 
-	public void crossover(double prob) {
+	public void crossover(Double prob) {
 		// Seleccionamos los individuos para el crossver
 		this.poblacionPostCrossOver = new ArrayList<>();
 		ArrayList<ArrayList<Integer>> poblacionSolteros = new ArrayList<>(poblacionPostCrossOver);
 		ArrayList<ArrayList<Integer>> poblacionParejas = new ArrayList<>(poblacionPostCrossOver);
 		ArrayList<ArrayList<Integer>> poblacionAux = new ArrayList<>(poblacionPostCrossOver);
-		double aux = 0.0;
+		Double aux = 0.0;
 		for ( int i = 0; i < this.tamanoPoblacion; i++){
 			aux = ThreadLocalRandom.current().nextDouble(0,1 + 1);
 			if ( aux <= prob) {												// Vi cruza
@@ -210,50 +216,32 @@ public class AlgoritmoGegentico {
 		if ( iteracionActual == nMaximoIteraciones){
 			return true;
 		} else {
+			Double contador = 0.0;
+			if ( this.getBuenaForma()==null){
+				return false;
+			}
+			for ( int i = 0; i < this.getBuenaForma().size(); i++){
+				contador = contador +  (this.getBuenaForma().get(i)/ (double) this.tamanoIndividuo);
+			}
+			Double media = contador / (double) this.buenaForma.size();
+			if ( media >= 0.75){
+				System.out.println("La media vale:" + media);
+				return true;
+			}
+			System.out.println(media);
 			return false;
 		}
-		
-		// Calculamos la media 
-		/*if ( this.buenaForma == null){
-			return false;
-		}
-		ArrayList<Integer> buenaFormaAntigua = new ArrayList(this.buenaForma);
-		// Calculamos su nueva buena forma
-		this.evaluar();
-		
-		double mediaAntigua = 0.0;
-		double mediaActualizada = 0.0;
-		
-		for ( int i =0; i < buenaFormaAntigua.size(); i++){
-			mediaAntigua = mediaAntigua + buenaFormaAntigua.get(i);
-		}
-		mediaAntigua = mediaAntigua / buenaForma.size();
-		
-		
-		for ( int i =0; i < buenaForma.size(); i++){
-			mediaActualizada = mediaActualizada + buenaForma.get(i);
-		}
-		mediaActualizada = mediaActualizada / buenaForma.size();
-		
-		double diferencia = mediaAntigua - mediaActualizada;
-		
-		if ( diferencia <= 0.4){
-			System.out.println("La diferencia vale: " + diferencia);
-			return true;
-		}
-		System.out.println("La diferencia vale: " + diferencia);
-		return false;*/
 	}
 	
 	
-	public void mutar(double prob){
+	public void mutar(Double prob){
 		for ( int i = 0; i < this.tamanoPoblacion; i++){
 			for ( int j = 0; j < this.tamanoIndividuo ; j++){
-				double probGen = ThreadLocalRandom.current().nextDouble(0,1 + 1);
+				Double probGen = ThreadLocalRandom.current().nextDouble(0,1 + 1);
 				if ( probGen >= prob){
 					// entonces mutamos el gen
-					Integer nuevoGen = ThreadLocalRandom.current().nextInt(this.min,this.max + 1);
-					ArrayList <Integer> nuevoIndividuo = new ArrayList<>();
+					Integer nuevoGen = (Integer) ThreadLocalRandom.current().nextInt(this.min,this.max + 1);
+					ArrayList<Integer> nuevoIndividuo = new ArrayList<>();
 					nuevoIndividuo = this.poblacionInicial.get(i);
 					nuevoIndividuo.set(j, nuevoGen);
 				}
