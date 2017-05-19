@@ -15,6 +15,8 @@ public class AlgoritmoGegentico {
 	private ArrayList<ArrayList<Integer>> poblacionPostCrossOver;
 	private int nMaximoIteraciones = 20;
 	private int iteracionActual = 0;
+	private int max = 0;
+	private int min = 0;
 
 	//====================================GettersSetters===============================================
 	public ArrayList<Integer> getBuenaForma() {
@@ -66,6 +68,8 @@ public class AlgoritmoGegentico {
 		ArrayList<Integer> aux = new ArrayList<>(len) ;
 		this.tamanoIndividuo = len;
 		this.tamanoPoblacion = num;
+		this.max = max;
+		this.min = min;
 		for ( int i = 0; i < num; i++ ){
 			aux = new ArrayList<>(len) ;
 			for ( int j = 0; j < len; j++){
@@ -94,7 +98,7 @@ public class AlgoritmoGegentico {
 	private int contarUnos(ArrayList<Integer> individuo){
 		int contador= 0;
 		for ( int i = 0; i < individuo.size(); i++){
-			if ( individuo.get(i) == 2 ){
+			if ( individuo.get(i) == 2 ){		// contamos doses
 				contador++;
 			}
 		}
@@ -119,7 +123,8 @@ public class AlgoritmoGegentico {
 			probabilidadAux = buenaForma.get(i);
 			probabilidadAux = probabilidadAux / buenaFormaTotal;
 			probabilidadAux = ( probabilidadAux * 100 ) ;
-			probabilidadAux--;
+			//probabilidadAux--;
+			probabilidadAux++;
 			// Ahora tenemos el número de casillas para esa cadena en la ruleta
 			if ( probabilidadAux == -1.0){
 				probabilidadAux = 1;
@@ -134,15 +139,13 @@ public class AlgoritmoGegentico {
 					ruleta.add(i);
 				}
 			}
-			
 		}
 		
-		//System.out.println("e");
 		
 		// Lanzamos la ruleta para cada individuo de la población
-		/*for ( int i = 0; i < this.tamanoPoblacion; i++){
+		for ( int i = 0; i < this.tamanoPoblacion; i++){
 			ruleta.add(i,ThreadLocalRandom.current().nextInt(0,this.tamanoPoblacion));
-		}*/
+		}
 		
 		for ( int i = 0; i < this.tamanoPoblacion; i++){
 			poblacionPostRuleta.add(i, poblacionInicial.get(ruleta.get(i)));
@@ -242,6 +245,21 @@ public class AlgoritmoGegentico {
 		return false;*/
 	}
 	
+	
+	public void mutar(double prob){
+		for ( int i = 0; i < this.tamanoPoblacion; i++){
+			for ( int j = 0; j < this.tamanoIndividuo ; j++){
+				double probGen = ThreadLocalRandom.current().nextDouble(0,1 + 1);
+				if ( probGen >= prob){
+					// entonces mutamos el gen
+					Integer nuevoGen = ThreadLocalRandom.current().nextInt(this.min,this.max + 1);
+					ArrayList <Integer> nuevoIndividuo = new ArrayList<>();
+					nuevoIndividuo = this.poblacionInicial.get(i);
+					nuevoIndividuo.set(j, nuevoGen);
+				}
+			}
+		}
+	}
 	
 	
 	
