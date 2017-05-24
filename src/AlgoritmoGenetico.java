@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class AlgoritmoGegentico {
+public class AlgoritmoGenetico {
 	// =======================================Variables=================================================
 
 	// La poblacion inicial
