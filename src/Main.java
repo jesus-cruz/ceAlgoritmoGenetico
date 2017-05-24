@@ -7,7 +7,7 @@ public class Main {
 		// TODO Auto-generated method stub
 		
 		// Problema de la mochila
-		AlgoritmoGegentico algoritmoUno = new AlgoritmoGegentico();
+		AlgoritmoGenetico algoritmoUno = new AlgoritmoGenetico();
 		algoritmoUno.crearPoblacionInicial(4,10,1,0);		
 		System.out.println(algoritmoUno.getPoblacionInicial());
 		
