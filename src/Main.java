@@ -6,30 +6,28 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
+		// Problema de la mochila
 		AlgoritmoGegentico algoritmoUno = new AlgoritmoGegentico();
-		algoritmoUno.crearPoblacionInicial(0, 2, 17, 50);
-		/*ArrayList<ArrayList<Double>> mochila = new ArrayList<>();
-		
-		mochila.add(new ArrayList<>(Arrays.asList(10.0, 0.0)));
-		mochila.add(new ArrayList<>(Arrays.asList(20.0, 0.5)));
-		mochila.add(new ArrayList<>(Arrays.asList(20.0, 1.0)));
-		mochila.add(new ArrayList<>(Arrays.asList(20.0, 1.5)));
-		mochila.add(new ArrayList<>(Arrays.asList(20.0, 2.0)));
-		mochila.add(new ArrayList<>(Arrays.asList(10.0, 2.5)));
-		mochila.add(new ArrayList<>(Arrays.asList(10.0, 3.0)));
-		mochila.add(new ArrayList<>(Arrays.asList(10.0, 3.5)));
-		mochila.add(new ArrayList<>(Arrays.asList(10.0, 3.0)));
-		mochila.add(new ArrayList<>(Arrays.asList(10.0, 4.5)));
-		
-		algoritmoUno.crearPoblacionInicial(0, 9, 9, 4);
-		algoritmoUno.setDatos();*/
-		
-		
+		algoritmoUno.crearPoblacionInicial(4,10,1,0);		
 		System.out.println(algoritmoUno.getPoblacionInicial());
 		
+		ArrayList<Integer> aux = new ArrayList<>(10);
+		for ( int i = 0; i < 7 ; i ++){
+			aux.add(1);
+		}
+		aux.add(0);
+		aux.add(0);
+		aux.add(0);
 		
 		while ( !algoritmoUno.criterioParada()){
 			System.out.println(algoritmoUno.getPoblacionInicial());
+			for ( int i = 0; i < algoritmoUno.getPoblacionInicial().size();i++){
+				if ( algoritmoUno.getPoblacionInicial().get(i).equals(aux)) {
+					System.out.println(algoritmoUno.getPoblacionInicial().get(i));
+					System.out.println("Eureka");
+					System.exit(0);
+				}
+			}
 			//System.out.println("\nLa población inicial es:\n" + algoritmoUno.getPoblacionInicial());
 			
 			algoritmoUno.evaluar();
