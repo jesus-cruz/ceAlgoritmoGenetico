@@ -150,7 +150,7 @@ public class AlgoritmoGenetico {
 			parDatos[2] = parDatos[1] + mochila.get(i).get(1);
 			// Estamos en el caso de maximizar el valor y minimizar el peso, calculamos su aptitud
 			// a = alpha * V + beta * ( M - P ) 
-			parDatos[0] = 
+			//parDatos[0] = 
 		}
 		return parDatos;
 	}
