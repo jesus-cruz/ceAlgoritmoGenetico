@@ -7,7 +7,7 @@ public class agPrisionero {
 
 	// La poblacion inicial
 	private ArrayList<ArrayList<Integer>> poblacionInicial;
-	private ArrayList<ArrayList<Integer>> jugadasPrevias;
+	private ArrayList<Integer> jugadasPrevias;
 	private int nJugadores = 0;
 	private int nJugadasPosibles/*Revisar*/ = 0;
 	private ArrayList<Double> aptitud;							// [aptitud,valor,peso]
@@ -96,16 +96,10 @@ public class agPrisionero {
 			poblacionInicial.add(i, aux);
 		}
 		
-		// También creamos las jugadas previas, siempre serán 3 y entre 2 jugadores
-		// El número de jugadas previas es n(n-1)/2?
-		int nJugadasPrevias = (this.nJugadores*(nJugadores-1))/2;
-		this.jugadasPrevias = new ArrayList<>();
-		for ( int i = 0; i < nJugadasPrevias ; i++){
-			aux = new ArrayList<>();
-			for ( int j = 0; j < 6 ; j++ ){
-				aux.add(j, (Integer) ThreadLocalRandom.current().nextInt(min, max + 1));
-			}
-			jugadasPrevias.add(i,aux);
+		// También creamos las jugadas previas, es el mismo para todos los posibles enfrentamientos en una generación
+		this.jugadasPrevias = new ArrayList<>(3);
+		for ( int i = 0; i < 3*2 ; i++){
+			jugadasPrevias.add(i, (Integer) ThreadLocalRandom.current().nextInt(min, max + 1));
 		}
 	}
 
@@ -113,7 +107,7 @@ public class agPrisionero {
 	/**
 	 * Evaluamos la aptitud de cada individuo: en el caso del dilema del prisionero para calcularlo haremos
 	 * lo siguiente:
-	 * 	1º	Analizamos el historial actual de la iteración
+	 * 	1º	Analizamos el historial de la generación
 	 * 	2º	Comprobamos las jugadas realizadas y buscamos en sus jugadas ( generación ) la correspondiente
 	 * 		usando para ello un índice que sacamos de pasar a binario el historial actual 
 	 * 	3º 	Calculamos su aptitud en función de los puntos recibidos
@@ -135,22 +129,56 @@ public class agPrisionero {
 	 * @return
 	 */
 	private int match(int jugadorActual) {
-		ArrayList<Integer> aux;
-		int valorDecimal = 0;
+		ArrayList <Integer> jug1 = new ArrayList<>();
+		ArrayList <Integer> jug2 = new ArrayList<>();
+		Integer respuesta1, respuesta2;
 		for ( int i = jugadorActual ; i < nJugadores; i++){
-			valorDecimal = 0;
-			if ( i!= jugadorActual){									// No se va a enfrentar contra si mismo
-				aux = new ArrayList<>();
-				// Calculamos el indice para acceder a sus jugadas posibles
-				int indice = 0;
-				// Accedemos a las jugadas previas del jugadorActual con el i
-				aux = jugadasPrevias.get(i);
-				System.out.println(aux);
-				// Pasamos a binario y calculamos su valor decimal total
-				for ( int j = aux.size()-1 ; j >= 0 ; j--){
-					valorDecimal = (int) (valorDecimal + (aux.get(j))*(Math.pow(2, j)));
+			respuesta1 = 0;
+			respuesta2 = 0;
+			// No se va a enfrentar contra si mismo
+			if ( i!= jugadorActual){											
+				
+				// Pasamos a binario y calculamos su valor decimal total para el jugador 1
+				for ( int j = 0 ; j < jugadasPrevias.size() ; j++){
+					respuesta1 = (int) (respuesta1 + (jugadasPrevias.get(jugadasPrevias.size()-j-1))*(Math.pow(2, j)));
 				}
-				System.out.println(valorDecimal);
+				// Buscamos en las jugadas de jugador1 la jugada dada por el índice obtenido del binario
+				jug1 = poblacionInicial.get(jugadorActual);
+				
+				
+				// Pasamos a binario y calculamos su valor decimal total para el jugador 2
+				jugadasPrevias = new ArrayList<>();
+				jugadasPrevias.add(0);
+				jugadasPrevias.add(1);
+				jugadasPrevias.add(0);
+				jugadasPrevias.add(1);
+				jugadasPrevias.add(0);
+				jugadasPrevias.add(0);
+				
+				for ( int j = 0 ; j < jugadasPrevias.size() ; j++){
+					
+					if ( j%2 == 0 ){
+						respuesta2 = (int) (respuesta2 + (jugadasPrevias.get(jugadasPrevias.size()-j-2))*(Math.pow(2, j)));
+					} 
+					if ( j%2 == 1 ){
+						respuesta2 = (int) (respuesta2 + (jugadasPrevias.get(jugadasPrevias.size()-j))*(Math.pow(2, j)));
+					}
+				}
+				System.out.println("respuesta " + respuesta2);
+				System.out.println(jugadasPrevias);
+				System.exit(-1);
+				// Buscamos en las jugadas de jugador2 la jugada dada por el índice obtenido del binario
+				//jug2 = poblacionInicial.get(i);
+				
+				
+				
+				
+				// Lo mismo para el jugador 2 invirtiendo el orden de la cadena
+				
+				// Obtenemos la respuesta a ese historial
+				
+				
+				// Finalmente calculamos la aptitud con el historial + jugadas elegidas por el jugador 1 y el 2
 			}
 		}
 		return 0;
