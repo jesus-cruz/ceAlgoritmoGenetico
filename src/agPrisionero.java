@@ -15,7 +15,7 @@ public class agPrisionero {
 	private ArrayList<ArrayList<Integer>> poblacionPostRuleta;
 	private ArrayList<ArrayList<Integer>> poblacionPostCrossOver;
 	private int nJugadas = 0;
-	private int nMaximoIteraciones = 0;
+	//private int nMaximoIteraciones = 0;
 	private int iteracionActual = 0;
 	private int max = 0;
 	private int min = 0;
@@ -320,8 +320,9 @@ public class agPrisionero {
 		}
 	}
 
-	public boolean criterioParada() {
+	public boolean criterioParada(double mediaMax, int nMaximoIteraciones) {
 		if (iteracionActual == nMaximoIteraciones) {
+			System.out.println("max numero de it");
 			return true;
 		} else {
 			Double contador = 0.0;
@@ -329,10 +330,10 @@ public class agPrisionero {
 				return false;
 			}
 			for (int i = 0; i < this.getaptitud().size(); i++) {
-				contador = contador + (this.getaptitud().get(i) / (double) this.nJugadasPosibles/* Revisar */);
+				contador = contador + (this.getaptitud().get(i) / (double) this.nJugadasPosibles);
 			}
 			Double media = contador / (double) this.aptitud.size();
-			if (media >= 14.1) {
+			if (media >= mediaMax) {
 				System.out.println("La media vale:" + media);
 				return true;
 			}

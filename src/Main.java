@@ -16,8 +16,9 @@ public class Main {
 		int nJugadasPosibles = (int) Math.pow(nPosiblesRespuestas, nJugadoresMatch*nJugadasPrevias);
 		a.crearPoblacionInicial(nJugadores,  nJugadas, nJugadasPosibles, max, min);
 		
-		for ( int i = 0; i < 100 ;i++){
-			System.out.println(a.getPoblacionInicial());
+		int itMax = 10000000;
+		for ( int i = 0; i < itMax ;i++){
+			//System.out.println(a.getPoblacionInicial());
 			
 			a.evaluar();
 			
@@ -25,7 +26,24 @@ public class Main {
 			
 			a.crossover(0.9);
 			
-			a.mutar(0.9);
+			a.mutar(0.5);
+			
+			// Solucion hasta el momento
+			/* 	[[1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 
+					1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], 
+				[0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 
+					1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0], 
+ 				[0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 
+ 					0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1], 
+ 				[0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1,
+ 				 	1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0]]*/
+
+
+			if (a.criterioParada(0.703125,itMax)){
+				System.out.println(a.getPoblacionInicial());
+				a.criterioParada(0.703126,itMax);
+				break;
+			}
 		}
 		
 	}
