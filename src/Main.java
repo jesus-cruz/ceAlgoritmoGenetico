@@ -16,9 +16,18 @@ public class Main {
 		int nJugadasPosibles = (int) Math.pow(nPosiblesRespuestas, nJugadoresMatch*nJugadasPrevias);
 		a.crearPoblacionInicial(nJugadores,  nJugadas, nJugadasPosibles, max, min);
 		
-		System.out.println(a.getPoblacionInicial());
+		for ( int i = 0; i < 100 ;i++){
+			System.out.println(a.getPoblacionInicial());
+			
+			a.evaluar();
+			
+			a.seleccionarParaReproduccion();
+			
+			a.crossover(0.9);
+			
+			a.mutar(0.9);
+		}
 		
-		a.evaluar();
 	}
 
 	
